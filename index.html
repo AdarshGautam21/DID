@@ -4,33 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DID Creation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('bgimg.jpg') center fixed;
+            background-size: cover;
+        }
+        .form-container {
+            background: linear-gradient(135deg, #b9aac9, #021330);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+            color: white;
+            font-weight: bold;
+        }
+        input, button {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <h1>Create Your DID</h1>
-    <form id="didForm" enctype="multipart/form-data">
-        <label for="aadhar">Upload Aadhar:</label>
-        <input type="file" id="aadhar" name="aadhar" required><br><br>
-        
-        <label for="passport">Upload Passport:</label>
-        <input type="file" id="passport" name="passport" required><br><br>
+    <div class="form-container">
+        <h1 style="text-align: center; color: white;">Create Your DID</h1>
+        <form id="didForm" enctype="multipart/form-data">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
 
-        <button type="submit">Create DID</button>
-    </form>
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" required>
+
+            <label for="email">Email ID:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="aadhar">Upload Aadhar:</label>
+            <input type="file" id="aadhar" name="aadhar" required>
+
+            <label for="passport">Upload Passport:</label>
+            <input type="file" id="passport" name="passport" required>
+
+            <label for="wallet1">Wallet Address 1:</label>
+            <input type="text" id="wallet1" name="wallet1" required>
+
+            <label for="wallet2">Wallet Address 2:</label>
+            <input type="text" id="wallet2" name="wallet2">
+
+            <label for="wallet3">Wallet Address 3:</label>
+            <input type="text" id="wallet3" name="wallet3">
+
+            <button type="submit">Create DID</button>
+        </form>
+    </div>
 
     <script>
         document.getElementById('didForm').onsubmit = async function(e) {
             e.preventDefault();
+
             const formData = new FormData();
+            formData.append('name', document.getElementById('name').value);
+            formData.append('age', document.getElementById('age').value);
+            formData.append('email', document.getElementById('email').value);
             formData.append('aadhar', document.getElementById('aadhar').files[0]);
             formData.append('passport', document.getElementById('passport').files[0]);
+            formData.append('wallet1', document.getElementById('wallet1').value);
+            formData.append('wallet2', document.getElementById('wallet2').value);
+            formData.append('wallet3', document.getElementById('wallet3').value);
 
-            const response = await fetch('/api/create-did', {
-                method: 'POST',
-                body: formData
-            });
+            try {
+                const response = await fetch('/api/create-did', {
+                    method: 'POST',
+                    body: formData
+                });
 
-            const result = await response.json();
-            alert(`DID Created: ${result.did}`);
+                if (!response.ok) {
+                    throw new Error('Failed to create DID');
+                }
+
+                const result = await response.json();
+                alert(`DID Created: ${result.did}`);
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
         };
     </script>
 </body>
