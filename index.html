@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DID Creation</title>
+</head>
+<body>
+    <h1>Create Your DID</h1>
+    <form id="didForm" enctype="multipart/form-data">
+        <label for="aadhar">Upload Aadhar:</label>
+        <input type="file" id="aadhar" name="aadhar" required><br><br>
+        
+        <label for="passport">Upload Passport:</label>
+        <input type="file" id="passport" name="passport" required><br><br>
+
+        <button type="submit">Create DID</button>
+    </form>
+
+    <script>
+        document.getElementById('didForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('aadhar', document.getElementById('aadhar').files[0]);
+            formData.append('passport', document.getElementById('passport').files[0]);
+
+            const response = await fetch('/api/create-did', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            alert(`DID Created: ${result.did}`);
+        };
+    </script>
+</body>
+</html>
